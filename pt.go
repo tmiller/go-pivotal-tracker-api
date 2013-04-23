@@ -1,5 +1,5 @@
 /*
-Package pivotaltracker implements a wrapper around Pivotal Tracker's API.
+Package pt implements a wrapper around Pivotal Tracker's API.
 */
 package pt
 
