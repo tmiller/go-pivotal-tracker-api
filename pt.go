@@ -12,10 +12,10 @@ import (
 
 // Story represents a Pivotal Tracker story
 type Story struct {
-	Id            int    `xml:"id"`
-	Name          string `xml:"name"`
-	Url           string `xml:"url"`
-	CurrentStatus string `xml:"current_status"`
+	Id           int    `xml:"id"`
+	Name         string `xml:"name"`
+	Url          string `xml:"url"`
+	CurrentState string `xml:"current_state"`
 }
 
 // PivotalTracker holds state information about the API.
