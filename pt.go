@@ -1,7 +1,7 @@
 /*
 Package pivotaltracker implements a wrapper around Pivotal Tracker's API.
 */
-package main
+package pt
 
 import (
 	"encoding/xml"
@@ -10,12 +10,6 @@ import (
 	"net/http"
 )
 
-func main() {
-	if story, ok := FindStory(/* AN INTEGER */); ok {
-		fmt.Printf("[#%d] \n\n%s\n%s\n", story.Id, story.Name, story.Url)
-	}
-}
-
 // Story represents a Pivotal Tracker story
 type Story struct {
 	Id   int    `xml:"id"`
@@ -23,11 +17,17 @@ type Story struct {
 	Url  string `xml:"url"`
 }
 
+// PivotalTracker holds state information about the API.
+type PivotalTracker struct {
+  ApiKey string
+}
+
+
 // Calls Pivotal Tracker and finds a story for the given story_id.
-func FindStory(storyId int) (Story, bool) {
+func (pt PivotalTracker)FindStory(storyId int) (Story, bool) {
 	findStory := fmt.Sprintf("stories/%d", storyId)
 
-	response, err := callPivotalTracker(findStory)
+	response, err := pt.callPivotalTracker(findStory)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -41,7 +41,7 @@ func FindStory(storyId int) (Story, bool) {
 
 // Sends a command to Pivotal Tracker and returns XML representation of the
 // response.
-func callPivotalTracker(command string) (response []byte, err error) {
+func (pt PivotalTracker)callPivotalTracker(command string) (response []byte, err error) {
 	client := new(http.Client)
 
 	url := "https://www.pivotaltracker.com/services/v4/" + command
@@ -50,8 +50,7 @@ func callPivotalTracker(command string) (response []byte, err error) {
 		return
 	}
 
-	apiKey := "PIVOTAL API KEY"
-	request.Header.Add("X-TrackerToken", apiKey)
+	request.Header.Add("X-TrackerToken", pt.ApiKey)
 
 	resp, err := client.Do(request)
 	if err != nil {
