@@ -23,8 +23,8 @@ type PivotalTracker struct {
 }
 
 // Calls Pivotal Tracker and finds a story for the given story_id.
-func (pt PivotalTracker) FindStory(storyId int) (Story, bool) {
-	findStory := fmt.Sprintf("stories/%d", storyId)
+func (pt PivotalTracker) FindStory(storyId []byte) (Story, bool) {
+	findStory := fmt.Sprintf("stories/%s", storyId)
 
 	response, err := pt.callPivotalTracker(findStory)
 	if err != nil {
