@@ -5,9 +5,11 @@ package pt
 
 import (
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 // Story represents a Pivotal Tracker story
@@ -18,25 +20,31 @@ type Story struct {
 	CurrentState string `xml:"current_state"`
 }
 
+func (s Story) State() string {
+	return strings.Title(s.CurrentState)
+}
+
 // PivotalTracker holds state information about the API.
 type PivotalTracker struct {
 	ApiKey string
 }
 
 // Calls Pivotal Tracker and finds a story for the given story_id.
-func (pt PivotalTracker) FindStory(storyId []byte) (Story, bool) {
+func (pt PivotalTracker) FindStory(storyId string) (story Story, err error) {
 	findStory := fmt.Sprintf("stories/%s", storyId)
 
 	response, err := pt.callPivotalTracker(findStory)
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
 
-	var story Story
 	xml.Unmarshal(response, &story)
 
-	found := (story.Id != 0)
-	return story, found
+	if story.Id == 0 {
+		err = errors.New("No Story found for " + storyId + ".")
+	}
+
+	return
 }
 
 // Sends a command to Pivotal Tracker and returns XML representation of the
@@ -59,5 +67,6 @@ func (pt PivotalTracker) callPivotalTracker(command string) (response []byte, er
 
 	defer resp.Body.Close()
 	response, err = ioutil.ReadAll(resp.Body)
+
 	return
 }
