@@ -19,12 +19,11 @@ type Story struct {
 
 // PivotalTracker holds state information about the API.
 type PivotalTracker struct {
-  ApiKey string
+	ApiKey string
 }
 
-
 // Calls Pivotal Tracker and finds a story for the given story_id.
-func (pt PivotalTracker)FindStory(storyId int) (Story, bool) {
+func (pt PivotalTracker) FindStory(storyId int) (Story, bool) {
 	findStory := fmt.Sprintf("stories/%d", storyId)
 
 	response, err := pt.callPivotalTracker(findStory)
@@ -41,7 +40,7 @@ func (pt PivotalTracker)FindStory(storyId int) (Story, bool) {
 
 // Sends a command to Pivotal Tracker and returns XML representation of the
 // response.
-func (pt PivotalTracker)callPivotalTracker(command string) (response []byte, err error) {
+func (pt PivotalTracker) callPivotalTracker(command string) (response []byte, err error) {
 	client := new(http.Client)
 
 	url := "https://www.pivotaltracker.com/services/v4/" + command
