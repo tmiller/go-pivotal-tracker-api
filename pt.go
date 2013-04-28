@@ -14,7 +14,7 @@ import (
 
 // Story represents a Pivotal Tracker story
 type Story struct {
-	Id           int    `xml:"id"`
+	Id           string    `xml:"id"`
 	Name         string `xml:"name"`
 	Url          string `xml:"url"`
 	CurrentState string `xml:"current_state"`
@@ -40,7 +40,7 @@ func (pt PivotalTracker) FindStory(storyId string) (story Story, err error) {
 
 	xml.Unmarshal(response, &story)
 
-	if story.Id == 0 {
+	if story.Id == "" {
 		err = errors.New("No Story found for " + storyId + ".")
 	}
 
