@@ -4,7 +4,7 @@ Package pt implements a wrapper around Pivotal Tracker's API.
 package pt
 
 import (
-	"encoding/xml"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -14,10 +14,10 @@ import (
 
 // Story represents a Pivotal Tracker story
 type Story struct {
-	Id           string    `xml:"id"`
-	Name         string `xml:"name"`
-	Url          string `xml:"url"`
-	CurrentState string `xml:"current_state"`
+	Id           int
+	Name         string
+	Url          string
+	CurrentState string `json:"current_state"`
 }
 
 func (s Story) State() string {
@@ -38,9 +38,9 @@ func (pt PivotalTracker) FindStory(storyId string) (story Story, err error) {
 		return
 	}
 
-	xml.Unmarshal(response, &story)
+	err = json.Unmarshal(response, &story)
 
-	if story.Id == "" {
+	if story.Id == 0 && err == nil {
 		err = errors.New("No Story found for " + storyId + ".")
 	}
 
@@ -52,7 +52,7 @@ func (pt PivotalTracker) FindStory(storyId string) (story Story, err error) {
 func (pt PivotalTracker) callPivotalTracker(command string) (response []byte, err error) {
 	client := new(http.Client)
 
-	url := "https://www.pivotaltracker.com/services/v4/" + command
+	url := "https://www.pivotaltracker.com/services/v5/" + command
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return
