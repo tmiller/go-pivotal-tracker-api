@@ -16,6 +16,7 @@ import (
 type Story struct {
 	Id           int
 	Name         string
+	Description  string
 	Url          string
 	CurrentState string `json:"current_state"`
 }
